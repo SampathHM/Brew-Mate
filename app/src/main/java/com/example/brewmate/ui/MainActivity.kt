@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -29,6 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
@@ -55,6 +57,7 @@ class MainActivity : ComponentActivity() {
 fun BrewMate(modifier: Modifier = Modifier) {
     val cocktailViewModel: CocktailViewModel = viewModel()
     var searchQuery by remember { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(modifier = modifier.padding(16.dp)) {
         // Search Bar
@@ -62,12 +65,16 @@ fun BrewMate(modifier: Modifier = Modifier) {
             value = searchQuery,
             onValueChange = { searchQuery = it },
             label = { Text("Search cocktails") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             modifier = Modifier.fillMaxWidth()
         )
 
         // Search Button
         Button(
-            onClick = { cocktailViewModel.searchCocktails(searchQuery) },
+            onClick = {
+                cocktailViewModel.searchCocktails(searchQuery)
+                keyboardController?.hide()
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp)
