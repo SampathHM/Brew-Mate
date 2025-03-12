@@ -181,21 +181,23 @@ fun SearchScreen(
                 when (val state = viewModel.cocktailUiState) {
                     is CocktailUiState.Loading -> LoadingScreen()
                     is CocktailUiState.Success -> {
-                        when {
-                            state.cocktails.isNotEmpty() -> ListScreen(
+                        if (state.cocktails.isNotEmpty()) {
+                            ListScreen(
                                 cocktails = state.cocktails,
                                 onItemClick = { navController.navigate("detail/${it.idDrink}") }
                             )
-                            searchTriggered -> Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "Cocktail not found",
-                                    color = MaterialTheme.colorScheme.error,
-                                    textAlign = TextAlign.Center
-                                )
-                            }
+                        }
+                    }
+                    is CocktailUiState.Empty -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "Cocktail not found",
+                                color = MaterialTheme.colorScheme.error,
+                                textAlign = TextAlign.Center
+                            )
                         }
                     }
                     is CocktailUiState.Error -> ErrorScreen()

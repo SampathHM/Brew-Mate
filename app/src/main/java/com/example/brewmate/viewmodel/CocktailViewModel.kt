@@ -14,6 +14,7 @@ sealed interface CocktailUiState {
     data class Success(val cocktails: List<Cocktail>) : CocktailUiState
     data object Loading : CocktailUiState
     data object Error : CocktailUiState
+    data object Empty : CocktailUiState
 }
 
 class CocktailViewModel : ViewModel() {
@@ -25,7 +26,11 @@ class CocktailViewModel : ViewModel() {
             cocktailUiState = CocktailUiState.Loading
             try {
                 val response = CocktailsApi.getInstance().getCocktails(query)
-                cocktailUiState = CocktailUiState.Success(response.drinks)
+                cocktailUiState = if (response.drinks.isNullOrEmpty()) {
+                    CocktailUiState.Empty
+                } else {
+                    CocktailUiState.Success(response.drinks)
+                }
             } catch (e: Exception) {
                 Log.e("ERROR", "Search failed", e)
                 cocktailUiState = CocktailUiState.Error
