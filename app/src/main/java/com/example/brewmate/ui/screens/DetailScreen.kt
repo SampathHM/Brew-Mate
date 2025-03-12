@@ -23,11 +23,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.brewmate.R
 import com.example.brewmate.model.Cocktail
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,7 +43,7 @@ fun DetailScreen(cocktail: Cocktail, navController: NavController) {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.back_button), // "Back"
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
@@ -62,7 +64,7 @@ fun DetailScreen(cocktail: Cocktail, navController: NavController) {
             // Cocktail Image
             AsyncImage(
                 model = cocktail.strDrinkThumb,
-                contentDescription = "Cocktail Image",
+                contentDescription = stringResource(R.string.content_description_cocktail_image),// "Cocktail Image",
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(250.dp)
@@ -85,7 +87,7 @@ fun DetailScreen(cocktail: Cocktail, navController: NavController) {
 
             // Cocktail Instructions
             Text(
-                text = cocktail.strInstructions ?: "No instructions available",
+                text = cocktail.strInstructions ?: stringResource(R.string.error_no_instructions), // "No instructions available"
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Justify
@@ -95,7 +97,7 @@ fun DetailScreen(cocktail: Cocktail, navController: NavController) {
 
             // Ingredients Section
             Text(
-                text = "Ingredients",
+                text = stringResource(R.string.detail_ingredients),// "Ingredients",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth(),
@@ -126,7 +128,7 @@ fun DetailScreen(cocktail: Cocktail, navController: NavController) {
             ingredients.forEach { (ingredient, measure) ->
                 if (!ingredient.isNullOrEmpty()) {
                     Text(
-                        text = "• $ingredient: ${measure ?: "to taste"}",
+                        text = "• $ingredient: ${measure ?: stringResource(R.string.measure_default)}",//"to taste"
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(start = 8.dp, bottom = 4.dp)
                     )

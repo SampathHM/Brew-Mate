@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -36,6 +37,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.brewmate.R
 import com.example.brewmate.ui.screens.DetailScreen
 import com.example.brewmate.ui.screens.ListScreen
 import com.example.brewmate.ui.theme.BrewMateTheme
@@ -76,7 +78,7 @@ fun ErrorScreen() {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "Error retrieving data. Please try again.",
+            text = stringResource(R.string.error_generic),//Error retrieving data. Please try again.
             color = MaterialTheme.colorScheme.error,
             textAlign = TextAlign.Center
         )
@@ -137,7 +139,7 @@ fun SearchScreen(
                     .padding(16.dp)
             ) {
                 Text(
-                    "BrewMate",
+                    text = stringResource(R.string.app_name),//BrewMate
                     Modifier.fillMaxWidth().padding(bottom = 16.dp),
                     style = MaterialTheme.typography.titleLarge,
                     textAlign = TextAlign.Center,
@@ -145,7 +147,7 @@ fun SearchScreen(
                 )
 
                 Text(
-                    text = "Discover and explore cocktail recipes",
+                    text = stringResource(R.string.search_screen_title),//Discover and explore cocktail recipes
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp),
@@ -157,7 +159,7 @@ fun SearchScreen(
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
-                    label = { Text("Search cocktails") },
+                    label = { Text(stringResource(R.string.search_hint)) },//Search cocktails
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
@@ -175,7 +177,7 @@ fun SearchScreen(
                         .fillMaxWidth()
                         .padding(top = 8.dp)
                 ) {
-                    Text("Search")
+                    Text(stringResource(R.string.search_button))//Search
                 }
 
                 when (val state = viewModel.cocktailUiState) {
@@ -194,7 +196,7 @@ fun SearchScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "Cocktail not found",
+                                text = stringResource(R.string.no_results),//Cocktail not found
                                 color = MaterialTheme.colorScheme.error,
                                 textAlign = TextAlign.Center
                             )

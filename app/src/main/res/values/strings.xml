@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Brew Mate</string>
+    <string name="search_screen_title">Discover and explore cocktail recipes</string>
+    <string name="search_hint">Search cocktails</string>
+    <string name="search_button">Search</string>
+    <string name="no_results">Cocktail not found</string>
+    <string name="error_generic">Error retrieving data. Please try again.</string>
+    <string name="error_no_instructions">No instructions available</string>
+    <string name="detail_ingredients">Ingredients</string>
+    <string name="measure_default">to taste</string>
+    <string name="back_button">Back</string>
+    <string name="content_description_cocktail_image">Cocktail image</string>
 </resources>

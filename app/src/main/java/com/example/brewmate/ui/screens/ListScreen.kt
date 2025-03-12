@@ -22,10 +22,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.brewmate.R
 import com.example.brewmate.model.Cocktail
 
 @Composable
@@ -69,7 +71,7 @@ fun CocktailListItem(
             // Cocktail Image
             AsyncImage(
                 model = cocktail.strDrinkThumb,
-                contentDescription = "Cocktail Image",
+                contentDescription = stringResource(R.string.content_description_cocktail_image),// "Cocktail Image",
                 modifier = Modifier
                     .size(80.dp)
                     .clip(RoundedCornerShape(8.dp)),
