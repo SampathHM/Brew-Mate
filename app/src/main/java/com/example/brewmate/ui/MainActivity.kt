@@ -20,7 +20,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +39,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.brewmate.ui.screens.DetailScreen
 import com.example.brewmate.ui.screens.ListScreen
 import com.example.brewmate.ui.theme.BrewMateTheme
+import com.example.brewmate.viewmodel.CocktailUiState
 import com.example.brewmate.viewmodel.CocktailViewModel
 
 
@@ -98,14 +98,13 @@ fun BrewMate() {
         }
         composable("detail/{drinkId}") { backStackEntry ->
             val drinkId = backStackEntry.arguments?.getString("drinkId")
-            val cocktail = cocktailViewModel.cocktails.value
-                .firstOrNull { it.idDrink == drinkId }
+            val cocktail = (cocktailViewModel.cocktailUiState as? CocktailUiState.Success)
+                ?.cocktails
+                ?.firstOrNull { it.idDrink == drinkId }
 
-            if (cocktail != null) {
-                DetailScreen(cocktail, navController)
-            } else {
-                Text("Cocktail not found", modifier = Modifier.padding(16.dp))
-            }
+                cocktail?.let {
+                DetailScreen(it, navController)
+            } ?: ErrorScreen()
         }
     }
 }
@@ -116,6 +115,7 @@ fun SearchScreen(
     viewModel: CocktailViewModel
 ) {
     var searchQuery by remember { mutableStateOf("") }
+    var searchTriggered by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Scaffold { innerPadding ->
@@ -130,68 +130,77 @@ fun SearchScreen(
                         )
                     )
                 )
-        ){
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .padding(16.dp)
-        ) {
-            Text(
-                "BrewMate",
-                Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Text(
-                text = "Discover and explore cocktail recipes",
+            ){
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.secondary
-            )
-
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                label = { Text("Search cocktails") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
-            )
-
-            Button(
-                onClick = {
-                    viewModel.searchCocktails(searchQuery)
-                    keyboardController?.hide()
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
+                    .padding(innerPadding)
+                    .padding(16.dp)
             ) {
-                Text("Search")
-            }
+                Text(
+                    "BrewMate",
+                    Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                    style = MaterialTheme.typography.titleLarge,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.primary
+                )
 
-            when {
-                viewModel.isLoading.collectAsState().value -> {
-                    CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
+                Text(
+                    text = "Discover and explore cocktail recipes",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.secondary
+                )
+
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    label = { Text("Search cocktails") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                )
+
+                Button(
+                    onClick = {
+                        if (searchQuery.isNotEmpty()) {
+                            searchTriggered = true
+                            viewModel.searchCocktails(searchQuery)
+                            keyboardController?.hide()
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                ) {
+                    Text("Search")
                 }
 
-                viewModel.cocktails.collectAsState().value.isEmpty() -> {
-                    Text("No cocktails found", Modifier.padding(16.dp))
-                }
-
-                else -> {
-                    ListScreen(
-                        cocktails = viewModel.cocktails.collectAsState().value,
-                        onItemClick = { navController.navigate("detail/${it.idDrink}") }
-                    )
+                when (val state = viewModel.cocktailUiState) {
+                    is CocktailUiState.Loading -> LoadingScreen()
+                    is CocktailUiState.Success -> {
+                        when {
+                            state.cocktails.isNotEmpty() -> ListScreen(
+                                cocktails = state.cocktails,
+                                onItemClick = { navController.navigate("detail/${it.idDrink}") }
+                            )
+                            searchTriggered -> Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "Cocktail not found",
+                                    color = MaterialTheme.colorScheme.error,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                    }
+                    is CocktailUiState.Error -> ErrorScreen()
                 }
             }
         }
-    }
     }
 }
