@@ -42,6 +42,10 @@ data class Cocktail(
     val strMeasure15: String?
 )
 
+data class CocktailResponse(
+    val drinks: List<Cocktail>?
+)
+
 const val BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1/"
 
 interface CocktailsApi {
@@ -51,7 +55,7 @@ interface CocktailsApi {
     ): CocktailResponse
 
     companion object{
-        var cocktailsService: CocktailsApi? = null
+        private var cocktailsService: CocktailsApi? = null
 
         fun getInstance(): CocktailsApi {
             if (cocktailsService === null) {
@@ -65,6 +69,3 @@ interface CocktailsApi {
     }
 }
 
-data class CocktailResponse(
-    val drinks: List<Cocktail>
-)
